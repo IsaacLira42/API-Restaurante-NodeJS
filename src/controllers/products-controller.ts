@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../config/prisma.js";
-import { string, z } from "zod";
+import { z } from "zod";
 
 class ProductsController {
     async listAll(req: Request, res: Response, next: NextFunction) {

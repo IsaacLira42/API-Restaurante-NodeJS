@@ -21,3 +21,10 @@ model Product {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
+model Table {
+  id           Int      @id @default(autoincrement())
+  table_number Int      @unique
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
