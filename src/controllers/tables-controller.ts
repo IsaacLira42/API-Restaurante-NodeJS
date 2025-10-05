@@ -24,14 +24,13 @@ class TablesController {
 
             const { table_number } = bodySchema.parse(req.body);
 
-            const table = prisma.table.create({
+            const table = await prisma.table.create({
                 data: {
                     table_number: table_number
                 }
             });
 
             return res.status(201).json(table);
-
         } catch (error) {
             next(error)
         }

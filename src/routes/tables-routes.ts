@@ -6,10 +6,10 @@ const tablesRoutes = Router();
 const tablesController = new TablesController();
 
 
-tablesRoutes.use("/", tablesController.listAll);
-tablesRoutes.use("/", tablesController.create);
-tablesRoutes.use("/:id", tablesController.update);
-tablesRoutes.use("/:id", tablesController.remove);
+tablesRoutes.get("/", tablesController.listAll);
+tablesRoutes.post("/", tablesController.create);
+tablesRoutes.put("/:id", tablesController.update);
+tablesRoutes.delete("/:id", tablesController.remove);
 
 
 export { tablesRoutes }
