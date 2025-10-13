@@ -10,17 +10,20 @@ API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScrip
 
 ---
 
-## ⚙️ Funcionalidades
+## ✨ Features
 
--   Gestão de Produtos (CRUD completo)
--   Gestão de Mesas (CRUD completo)
--   Controle de Sessões de Atendimento (abertura e fechamento)
--   Registro de Pedidos por sessão
--   Listagem de pedidos por mesa
+-   **Documentação Interativa**: API 100% documentada com Swagger, permitindo testar todos os endpoints pelo navegador.
+-   **Gestão de Produtos**: CRUD completo para os produtos do cardápio.
+-   **Gestão de Mesas**: CRUD completo para as mesas do restaurante.
+-   **Controle de Sessões**: Abertura e fechamento de sessões de atendimento por mesa.
+-   **Registro de Pedidos**: Criação de pedidos vinculados a uma sessão ativa.
+-   **Banco de Dados Populado**: Script de seed para popular o banco com dados de exemplo, facilitando os testes.
 
 ---
 
-## 📦 Como rodar o projeto localmente
+## 🚀 Rodando o Projeto
+
+Siga os passos abaixo para executar o projeto localmente.
 
 1.  **Clone o repositório:**
     ```bash
@@ -37,8 +40,8 @@ API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScrip
     -   Renomeie o arquivo `.env.example` para `.env`.
     -   Preencha a variável `DATABASE_URL` com a URL de conexão do seu banco de dados PostgreSQL.
         ```
-        PORT=3000
-
+        # Exemplo de .env
+        PORT=3333
         DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DATABASE"
         ```
 
@@ -47,15 +50,33 @@ API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScrip
     npx prisma migrate dev
     ```
 
-5.  **Execute o servidor:**
+5.  **Popule o banco com dados de exemplo (Seed):**
+    ```bash
+    npx prisma db seed
+    ```
+
+6.  **Inicie o servidor:**
     ```bash
     npm run dev
     ```
-    O servidor estará disponível em `http://localhost:3000`.
+
+O servidor estará disponível em `http://localhost:3333`.
 
 ---
 
-## 📜 Scripts Disponíveis
+## 📜 Documentação da API e Testes
+
+A forma mais fácil de explorar e testar a API é através da nossa documentação interativa com Swagger.
+
+**Após iniciar o servidor, acesse:**
+
+### 👉 [http://localhost:3333/api-docs](http://localhost:3333/api-docs)
+
+Lá você encontrará todos os endpoints listados, com seus parâmetros, e poderá executá-los diretamente pelo navegador.
+
+---
+
+## 📦 Scripts Disponíveis
 
 -   `dev`: Inicia o servidor em modo de desenvolvimento com hot-reload.
 -   `build`: Compila o código TypeScript para JavaScript.
@@ -63,6 +84,7 @@ API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScrip
 -   `test`: Executa os testes automatizados com Vitest.
 -   `lint`: Analisa o código em busca de erros e problemas de estilo.
 -   `format`: Formata o código utilizando o Prettier.
+-   `swagger-autogen`: Gera (ou atualiza) o arquivo de documentação `swagger-output.json`.
 
 ---
 

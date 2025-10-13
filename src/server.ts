@@ -1,14 +1,21 @@
-import express from "express";
-import { routes } from "./routes/index.js";
-import { errorHandling } from "./middlewares/error-handling.js";
+import express from 'express'
+import swaggerUi from 'swagger-ui-express'
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+import { errorHandling } from './middlewares/error-handling.js'
+import { routes } from './routes/index.js'
+import swaggerFile from '../swagger-output.json' with { type: 'json' }
 
-app.use(express.json());
+const app = express()
+const port = 3333
 
-app.use(routes);
+app.use(express.json())
 
-app.use(errorHandling);
+// Rota para a documentação do Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
-app.listen(PORT, () => console.log(`App listening on ${PORT}`));
+app.use(routes)
+app.use(errorHandling)
+
+app.listen(port, () =>
+  console.log(`Server is running on http://localhost:${port}`),
+)
