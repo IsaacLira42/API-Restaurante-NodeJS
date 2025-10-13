@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import prisma from "../config/prisma.js";
 import { z } from "zod";
 import { AppError } from "../utils/AppError.js";
+import { calculateOrderTotal } from "../utils/calculator.js";
 
 class OrderController {
     async listAll(req: Request, res: Response, next: NextFunction) {
@@ -17,7 +18,7 @@ class OrderController {
 
             const ordersWithTotal = orders.map(order => ({
                 ...order,
-                total: order.quantity * order.price
+                total: calculateOrderTotal(order.price, order.quantity)
             }));
 
             return res.json(ordersWithTotal);
@@ -50,7 +51,7 @@ class OrderController {
 
             const orderWithTotal = {
                 ...order,
-                total: order.quantity * order.price
+                total: calculateOrderTotal(order.price, order.quantity)
             };
 
             return res.json(orderWithTotal);
@@ -83,7 +84,7 @@ class OrderController {
 
             const ordersWithTotal = orders.map(order => ({
                 ...order,
-                total: order.quantity * order.price
+                total: calculateOrderTotal(order.price, order.quantity)
             }));
 
             return res.json(ordersWithTotal);
@@ -134,7 +135,7 @@ class OrderController {
 
             const orderWithTotal = {
                 ...order,
-                total: order.quantity * order.price
+                total: calculateOrderTotal(order.price, order.quantity)
             };
 
             return res.status(201).json(orderWithTotal);
