@@ -6,13 +6,7 @@ API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScrip
 
 ## 🛠️ Tecnologias utilizadas
 
-<div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="48" height="48" />
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg" width="48" height="48" />
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg" width="48" height="48" />
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="48" height="48" />
-    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" width="48" height="48" />
-</div>
+[![My Skills](https://skillicons.dev/icons?i=nodejs,express,prisma,ts,postgresql&theme=dark&perline=5)](https://skillicons.dev)
 
 ---
 
