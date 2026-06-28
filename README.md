@@ -1,96 +1,119 @@
 # 🍽️ API de Restaurante
 
-API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScript e Prisma. Este sistema permite o controle de produtos, mesas, sessões de atendimento e pedidos.
+API RESTful para gerenciar um restaurante, desenvolvida em Node.js com TypeScript, Prisma e PostgreSQL, estruturada em Arquitetura Limpa/Modular e pronta para execução em containers com Docker.
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## 🛠️ Tecnologias Utilizadas
 
-[![My Skills](https://skillicons.dev/icons?i=nodejs,express,prisma,ts,postgresql&theme=dark&perline=5)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=nodejs,express,prisma,ts,postgresql,docker&theme=dark&perline=6)](https://skillicons.dev)
 
----
-
-## ✨ Features
-
--   **Documentação Interativa**: API 100% documentada com Swagger, permitindo testar todos os endpoints pelo navegador.
--   **Gestão de Produtos**: CRUD completo para os produtos do cardápio.
--   **Gestão de Mesas**: CRUD completo para as mesas do restaurante.
--   **Controle de Sessões**: Abertura e fechamento de sessões de atendimento por mesa.
--   **Registro de Pedidos**: Criação de pedidos vinculados a uma sessão ativa.
--   **Banco de Dados Populado**: Script de seed para popular o banco com dados de exemplo, facilitando os testes.
+- **Node.js + TypeScript** (Express 5)
+- **Prisma ORM** (PostgreSQL)
+- **Docker & Docker Compose** (Multi-stage build)
+- **Zod** (Validação de schemas e sanitização de dados)
+- **Swagger UI** (Documentação interativa)
+- **Vitest** (Testes automatizados)
 
 ---
 
-## 🚀 Rodando o Projeto
+## 🏗️ Arquitetura e Boas Práticas
 
-Siga os passos abaixo para executar o projeto localmente.
+A aplicação segue uma **Arquitetura Limpa / Modular em Camadas**, garantindo separação clara de responsabilidades, baixo acoplamento e alta testabilidade:
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone https://github.com/IsaacLira42/API-Restaurante-NodeJS.git
-    cd API-Restaurante-NodeJS/
-    ```
-
-2.  **Instale as dependências:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configure o banco de dados:**
-    -   Renomeie o arquivo `.env.example` para `.env`.
-    -   Preencha a variável `DATABASE_URL` com a URL de conexão do seu banco de dados PostgreSQL.
-        ```
-        # Exemplo de .env
-        PORT=3333
-        DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DATABASE"
-        ```
-
-4.  **Aplique as migrações do banco de dados:**
-    ```bash
-    npx prisma migrate dev
-    ```
-
-5.  **Popule o banco com dados de exemplo (Seed):**
-    ```bash
-    npx prisma db seed
-    ```
-
-6.  **Inicie o servidor:**
-    ```bash
-    npm run dev
-    ```
-
-O servidor estará disponível em `http://localhost:3333`.
+```
+src/
+├── controllers/          # Recebe requisições HTTP, valida entradas (Zod) e retorna respostas.
+├── services/             # Contém todas as regras de negócio e lança erros de domínio (AppError).
+├── repositories/         # Camada de acesso a dados (Data Access Layer), encapsulando a API do Prisma.
+├── routes/               # Definição dos endpoints da API Express.
+├── middlewares/          # Tratamento global de erros (AppError e ZodError).
+└── utils/                # Funções utilitárias e classes de erro customizadas.
+```
 
 ---
 
-## 📜 Documentação da API e Testes
+## 🚀 Como Rodar o Projeto com Docker (Recomendado)
 
-A forma mais fácil de explorar e testar a API é através da nossa documentação interativa com Swagger.
+Todo o ambiente de desenvolvimento e produção (API + PostgreSQL + Migrations) pode ser executado com apenas **um comando**:
 
-**Após iniciar o servidor, acesse:**
+### 1. Pré-requisitos
+- Docker e Docker Compose instalados.
 
-### 👉 [http://localhost:3333/api-docs](http://localhost:3333/api-docs)
+### 2. Executando a Aplicação
+No diretório raiz do projeto, execute:
 
-Lá você encontrará todos os endpoints listados, com seus parâmetros, e poderá executá-los diretamente pelo navegador.
+```bash
+docker-compose up --build
+```
+
+> 💡 **O que acontece automaticamente:**
+> 1. O banco de dados PostgreSQL é inicializado e configurado com persistência via volume.
+> 2. O container da API aguarda o banco de dados estar 100% pronto (via `healthcheck`).
+> 3. O script de entrypoint executa automaticamente as migrations do Prisma (`prisma migrate deploy`).
+> 4. A API é iniciada na porta `3333`.
+
+### 3. Acessando a Documentação
+Após subir os containers, acesse a documentação Swagger em:
+👉 **[http://localhost:3333/api-docs](http://localhost:3333/api-docs)**
 
 ---
 
-## 📦 Scripts Disponíveis
+## 💻 Execução Local Sem Docker (Desenvolvimento Manual)
 
--   `dev`: Inicia o servidor em modo de desenvolvimento com hot-reload.
--   `build`: Compila o código TypeScript para JavaScript.
--   `start`: Inicia o servidor em modo de produção.
--   `test`: Executa os testes automatizados com Vitest.
--   `lint`: Analisa o código em busca de erros e problemas de estilo.
--   `format`: Formata o código utilizando o Prettier.
--   `swagger-autogen`: Gera (ou atualiza) o arquivo de documentação `swagger-output.json`.
+Se preferir rodar localmente sem Docker:
+
+1. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure o arquivo de ambiente:**
+   Crie um arquivo `.env` baseado no `.env.example` e ajuste a URL de conexão com seu PostgreSQL local:
+   ```env
+   PORT=3333
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/restaurante_db?schema=public"
+   ```
+
+3. **Gere o cliente e rode as migrations:**
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev
+   ```
+
+4. **(Opcional) Popule o banco de dados (Seed):**
+   ```bash
+   npx prisma db seed
+   ```
+
+5. **Inicie o servidor:**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📜 Scripts Disponíveis
+
+- `npm run dev`: Inicia o servidor em modo de desenvolvimento com hot-reload.
+- `npm run build`: Compila o código TypeScript para JavaScript na pasta `dist`.
+- `npm start`: Executa o código compilado em modo de produção.
+- `npm test`: Executa a suíte de testes automatizados com Vitest.
+- `npm run lint`: Analisa o código com ESLint.
+- `npm run format`: Formata o código com Prettier.
+
+---
+
+## 📈 Sugestões de Melhorias Futuras
+
+- **Observabilidade**: Adição de logger estruturado (Pino / Winston) e métricas via OpenTelemetry.
+- **CI/CD Pipeline**: Automação de testes e build de imagens Docker via GitHub Actions.
+- **Resiliência e Cache**: Implementação de cache com Redis em consultas frequentes (como cardápio de produtos).
 
 ---
 
 ## 👨‍💻 Autor
 
 **Isaac Lira**
-
--   **LinkedIn:** [https://www.linkedin.com/in/isaaclira42](https://www.linkedin.com/in/isaaclira42)
--   **GitHub:** [https://github.com/IsaacLira42](https://github.com/IsaacLira42)
+- **LinkedIn:** [https://www.linkedin.com/in/isaaclira42](https://www.linkedin.com/in/isaaclira42)
+- **GitHub:** [https://github.com/IsaacLira42](https://github.com/IsaacLira42)
