@@ -1,36 +1,30 @@
 import { NextFunction, Request, Response } from "express";
-import prisma from "../config/prisma.js";
 import { z } from "zod";
+import { ProductsService } from "../services/products-service.js";
 
 class ProductsController {
-    async listAll(req: Request, res: Response, next: NextFunction) {
+    private productsService: ProductsService;
+
+    constructor() {
+        this.productsService = new ProductsService();
+    }
+
+    listAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const querySchema = z.object({
                 search: z.string().optional().transform(val => val?.trim())
             });
 
             const { search } = querySchema.parse(req.query);
-
-            const products = await prisma.product.findMany({
-                where: search ? {
-                    name: {
-                        contains: search,
-                        mode: 'insensitive'
-                    }
-                } : {},
-                orderBy: {
-                    created_at: 'desc'
-                }
-            });
+            const products = await this.productsService.listAll(search);
 
             return res.json(products);
-
         } catch (error) {
             next(error);
         }
     }
 
-    async create(req: Request, res: Response, next: NextFunction) {
+    create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const bodySchema = z.object({
                 name: z.string().trim().min(6),
@@ -38,22 +32,15 @@ class ProductsController {
             });
 
             const { name, price } = bodySchema.parse(req.body);
+            const product = await this.productsService.create({ name, price });
 
-            const product = await prisma.product.create({
-                data: {
-                    name: name,
-                    price: price
-                }
-            });
-
-            return res.status(201).json(product)
-
+            return res.status(201).json(product);
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 
-    async update(req: Request, res: Response, next: NextFunction) {
+    update = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const paramsSchema = z.object({
                 id: z.string().transform(val => parseInt(val))
@@ -69,39 +56,28 @@ class ProductsController {
             const { id } = paramsSchema.parse(req.params);
             const updateData = bodySchema.parse(req.body);
 
-            const product = await prisma.product.update({
-                where: {
-                    id: id
-                },
-                data: updateData
-            });
+            const product = await this.productsService.update(id, updateData);
 
             return res.json(product);
-
         } catch (error) {
             next(error);
         }
     }
 
-    async remove(req: Request, res: Response, next: NextFunction) {
+    remove = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const paramsSchema = z.object({
                 id: z.string().transform(val => parseInt(val))
             });
 
             const { id } = paramsSchema.parse(req.params);
+            const product = await this.productsService.remove(id);
 
-            const produto = await prisma.product.delete({
-                where: {
-                    id: id
-                }
-            });
-
-            return res.status(200).json(produto);
+            return res.status(200).json(product);
         } catch (error) {
             next(error);
         }
     }
 }
 
-export { ProductsController }
+export { ProductsController };
