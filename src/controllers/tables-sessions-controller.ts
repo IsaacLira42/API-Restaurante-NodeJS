@@ -1,59 +1,31 @@
 import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import prisma from "../config/prisma.js";
-
+import { TablesSessionsService } from "../services/tables-sessions-service.js";
 
 class TablesSessionsController {
+    private tablesSessionsService: TablesSessionsService;
 
-    async listAll(req: Request, res: Response, next: NextFunction) {
+    constructor() {
+        this.tablesSessionsService = new TablesSessionsService();
+    }
+
+    listAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const tablesSessions = await prisma.tableSession.findMany({
-                include: {
-                    table: true
-                }
-            });
-
+            const tablesSessions = await this.tablesSessionsService.listAll();
             return res.json(tablesSessions);
         } catch (error) {
             next(error);
         }
     }
 
-    async create(req: Request, res: Response, next: NextFunction) {
+    create = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const bodySchema = z.object({
                 tableId: z.number()
             });
 
             const { tableId } = bodySchema.parse(req.body);
-
-            const tableExists = await prisma.table.findUnique({
-                where: { id: tableId }
-            });
-
-            if (!tableExists) {
-                return res.status(404).json({ error: "Mesa não encontrada" });
-            }
-
-            const existingSession = await prisma.tableSession.findFirst({
-                where: {
-                    tableId: tableId,
-                    closed_at: null
-                }
-            });
-
-            if (existingSession) {
-                return res.status(400).json({ error: "Já existe uma sessão aberta para esta mesa" });
-            }
-
-            const tableSession = await prisma.tableSession.create({
-                data: {
-                    tableId: tableId
-                },
-                include: {
-                    table: true
-                }
-            });
+            const tableSession = await this.tablesSessionsService.create({ tableId });
 
             return res.status(201).json(tableSession);
         } catch (error) {
@@ -61,16 +33,14 @@ class TablesSessionsController {
         }
     }
 
-    async close(req: Request, res: Response, next: NextFunction) {
+    close = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
-
-            const tableSession = await prisma.tableSession.update({
-                where: { id: parseInt(id) },
-                data: {
-                    closed_at: new Date()
-                }
+            const paramsSchema = z.object({
+                id: z.string().transform(val => parseInt(val))
             });
+
+            const { id } = paramsSchema.parse(req.params);
+            const tableSession = await this.tablesSessionsService.close(id);
 
             return res.json(tableSession);
         } catch (error) {
@@ -79,4 +49,4 @@ class TablesSessionsController {
     }
 }
 
-export { TablesSessionsController }
+export { TablesSessionsController };
